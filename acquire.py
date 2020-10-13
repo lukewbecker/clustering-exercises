@@ -69,5 +69,36 @@ def get_zillow_data():
         
     return zillow_df
 
+# Finding the number of missing columns:
+
+def zillow_missing_values(df):
+    
+    total_rows = df.shape[0]
+    
+    # Count of missing values per column
+    num_row_missing = df.isna().sum()
+    
+    # Pct of missing values per column
+    pct_rows_missing = num_row_missing/total_rows
+    
+    df_missing = pd.DataFrame({'num_row_missing': num_row_missing, 'pct_rows_missing': pct_rows_missing})
+    
+    return df_missing
+
+
+# Finding the number of missing Rows:
+# Much thanks to Corey for his assistance with the problem!
+
+def count_and_percent_missing_column(df):
+    num_rows = df.loc[:].isnull().sum()
+    num_cols_missing = df.loc[:, df.isna().any()].count()
+    pct_cols_missing = round(df.loc[:, df.isna().any()].count() / len(df.index) * 100, 3)
+    missing_cols_and_rows_df = pd.DataFrame({'num_cols_missing': num_cols_missing,
+                                             'pct_cols_missing': pct_cols_missing,
+                                             'num_rows': num_rows})
+    missing_cols_and_rows_df = missing_cols_and_rows_df.fillna(0)
+    missing_cols_and_rows_df['num_cols_missing'] = missing_cols_and_rows_df['num_cols_missing'].astype(int)
+    return missing_cols_and_rows_df
+
 
 print('End of file.')
