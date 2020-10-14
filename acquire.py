@@ -101,4 +101,16 @@ def count_and_percent_missing_column(df):
     return missing_cols_and_rows_df
 
 
+# Function designed to show which rows have the most missing column values, with both number of columns missing, and as a percentage of all columns (ie, % of missing column data by row)
+def nulls_by_row(df):
+    num_cols_missing = df.isnull().sum(axis=1)
+    pct_cols_missing = df.isnull().sum(axis=1)/df.shape[1]*100
+    rows_missing = pd.DataFrame({'num_cols_missing': num_cols_missing, 'pct_cols_missing': pct_cols_missing}).reset_index().groupby(['num_cols_missing','pct_cols_missing']).count().rename(index=str, columns={'index': 'num_rows'}).reset_index()
+    return rows_missing 
+
+
+
+
+
+
 print('End of file.')
