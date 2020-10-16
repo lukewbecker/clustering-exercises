@@ -109,8 +109,10 @@ def nulls_by_row(df):
     return rows_missing 
 
 
-
-
+####################### Mall data ####################### 
+def get_mallcustomer_data():
+    df = pd.read_sql('SELECT * FROM customers;', get_db('mall_customers'))
+    return df.set_index('customer_id')
 
 
 print('End of file.')
