@@ -70,16 +70,22 @@ def drop_cols(df):
     df.drop(columns = ['id.1', 'id', 'pid', 'propertyzoningdesc', 'calculatedbathnbr', 'heatingorsystemdesc', 'propertylandusedesc', 'rawcensustractandblock', 'finishedsquarefeet12'], inplace = True)
     return df
 
-def prop_type(df, id_list):
+def prep_data(df, id_list):
     '''
     In order to use this function, you will need to create a list of property use type ids (if using the Zillow data),
     and use that variable (which is a list), inside the 2nd argument of this function.
     The first argument is the dataframe, the 2nd argument is a list of property use ids that you want to use going forward.
     The function will remove all property use ids that are not in the `id_list` argument list.
+    This function will effectively reduce the number of rows, not removing any columns.
     '''
-
+    # Taking out these rows as well.
     df = df[(df.bedroomcnt > 0) & (df.bathroomcnt > 0)]
     df.unitcnt = df.unitcnt.fillna(1)
+    df.latitude = df.latitude / 1_000_000
+    df.longitude = df.longitude / 1_000_000
+
+    # changing the year to an int.
+    # df["yearbuilt"] = df["yearbuilt"].astype('int')
 
     # for example: id_list = [261.0, 260.0, 262.0, 263.0, 264.0]
     df = df[df.propertylandusetypeid.isin(id_list)]
@@ -118,7 +124,7 @@ def split_zillow_data(df):
 # These columns make most sense to replace missing values with the median value.
 # This function should take care of all missing values at one time once I've split the data. It expects three dataframes as input, and returns 3 dataframes out.
 
-def imputing_missing_values_all(train, validate, test):
+def impute_missing_values_all(train, validate, test):
     
     
     
@@ -128,7 +134,6 @@ def imputing_missing_values_all(train, validate, test):
     "taxvaluedollarcnt",
     "landtaxvaluedollarcnt",
     "structuretaxvaluedollarcnt",
-    "finishedsquarefeet12",
     "calculatedfinishedsquarefeet",
     "fullbathcnt",
     "lotsizesquarefeet",
@@ -161,23 +166,23 @@ def imputing_missing_values_all(train, validate, test):
         test[col].fillna(value=mode, inplace=True)
     
     # Taking care of unit count.
-    cols3 = [
-        "unitcnt"
-    ]
+    # cols3 = [
+    #     "unitcnt"
+    # ]
 
-    for col in cols3:
-        train[col].fillna(value=1, inplace=True)
-        validate[col].fillna(value=1, inplace=True)
-        test[col].fillna(value=1, inplace=True)
+    # for col in cols3:
+    #     train[col].fillna(value=1, inplace=True)
+    #     validate[col].fillna(value=1, inplace=True)
+    #     test[col].fillna(value=1, inplace=True)
 
     
-    cols4 = ["heatingorsystemdesc"]
+    # cols4 = ["heatingorsystemdesc"]
 
-    for col in cols4:
-        #median = train[col].median()
-        train[col].fillna("None", inplace = True)
-        validate[col].fillna("None", inplace = True)
-        test[col].fillna("None", inplace = True)
+    # for col in cols4:
+    #     #median = train[col].median()
+    #     train[col].fillna("None", inplace = True)
+    #     validate[col].fillna("None", inplace = True)
+    #     test[col].fillna("None", inplace = True)
     
         
     return train, validate, test
